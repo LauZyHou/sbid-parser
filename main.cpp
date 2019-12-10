@@ -213,6 +213,61 @@ void parseAttackTree(const TiXmlElement* const t) {
 
 //===============================================================================
 
+//【解析InitialKnowledge】
+void parseInitialKnowledge(const TiXmlElement* const t) {
+	const TiXmlElement* ik = t->FirstChildElement("InitialKnowledge");
+	while (ik != nullptr) {
+		const string process = ik->Attribute("process");
+		myPrint(process);
+		const string attribute = ik->Attribute("attribute");
+		myPrint(attribute);
+		ik = ik->NextSiblingElement("InitialKnowledge");
+	}
+}
+
+//===============================================================================
+
+//【解析SafetyProperty】但不设置这个标签
+void parseSafetyProperty(const TiXmlElement* const t) {
+	//【若干ConfidentialProperty】
+	const TiXmlElement* cp = t->FirstChildElement("ConfidentialProperty");
+	while (cp != nullptr) {
+		const string process = cp->Attribute("process");
+		myPrint(process);
+		const string attribute = cp->Attribute("attribute");
+		myPrint(attribute);
+		cp = cp->NextSiblingElement("ConfidentialProperty");
+	}
+	//【若干AuthenticityProperty】
+	const TiXmlElement* ap = t->FirstChildElement("AuthenticityProperty");
+	while (ap != nullptr) {
+		//每个AuthenticityProperty中有两个Value，一个发送方，一个接收方
+		//发送方
+		const TiXmlElement* sender = ap->FirstChildElement("Value");
+		if (sender != nullptr) {
+			const string process = sender->Attribute("process");
+			myPrint(process);
+			const string state = sender->Attribute("state");
+			myPrint(state);
+			const string attribute = sender->Attribute("attribute");
+			myPrint(attribute);
+		}
+		//接收方
+		const TiXmlElement* receiver = sender == nullptr ? nullptr : sender->NextSiblingElement("Value");
+		if (receiver != nullptr) {
+			const string process = receiver->Attribute("process");
+			myPrint(process);
+			const string state = receiver->Attribute("state");
+			myPrint(state);
+			const string attribute = receiver->Attribute("attribute");
+			myPrint(attribute);
+		}
+		ap = ap->NextSiblingElement("AuthenticityProperty");
+	}
+}
+
+//===============================================================================
+
 int main() {
 	//设置程序的地域信息，第一个参数设置LC_ALL表示影响范围是全部，第二个参数表示中文UTF-8编码
 	setlocale(LC_ALL, "zh_CN.UTF-8");
@@ -233,7 +288,15 @@ int main() {
 
 	//解析进程模板
 	//parseProcess(root);
-	parseAttackTree(root);
+
+	//解析攻击树
+	//parseAttackTree(root);
+
+	//解析InitialKnowledge
+	//parseInitialKnowledge(root);
+
+	//解析SafetyProperty
+	parseSafetyProperty(root);
 
 	//todo 解析其它
 
