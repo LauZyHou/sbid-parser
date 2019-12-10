@@ -41,7 +41,7 @@ void myPrint(const string s) {
 
 //===============================================================================
 
-//解析进程模板，传入进程模板的根标签<Process>
+//【解析Process】
 void parseProcess(const TiXmlElement* const t) {
 	const TiXmlElement* process = t->FirstChildElement("Process");
 	while (process != nullptr) {
@@ -50,7 +50,7 @@ void parseProcess(const TiXmlElement* const t) {
 
 		//todo 创建Process实例
 
-		//【解析Attribute】
+		//【Process的若干Attribute】
 		std::list<Attribute>* attrList = new std::list<Attribute>();
 		const TiXmlElement* attribute = process->FirstChildElement("Attribute");
 		while (attribute != nullptr) {
@@ -62,7 +62,7 @@ void parseProcess(const TiXmlElement* const t) {
 			attribute = attribute->NextSiblingElement("Attribute");
 		}
 
-		//【解析CommMethod】
+		//【Process的若干CommMethod】
 		//todo std:list<CommMethod>
 		const TiXmlElement* commMethod = process->FirstChildElement("CommMethod");
 		while (commMethod != nullptr) {
@@ -76,7 +76,7 @@ void parseProcess(const TiXmlElement* const t) {
 			commMethod = commMethod->NextSiblingElement("CommMethod");
 		}
 
-		//【解析Method】
+		//【Process的若干Method】
 		//todo std::list<Method>
 		const TiXmlElement* method = process->FirstChildElement("Method");
 		while (method != nullptr) {
@@ -169,6 +169,50 @@ void parseProcess(const TiXmlElement* const t) {
 
 //===============================================================================
 
+//【解析AttackTree】
+void parseAttackTree(const TiXmlElement* const t) {
+	const TiXmlElement* attackTree = t->FirstChildElement("AttackTree");
+	if (attackTree == nullptr)
+		return;
+	const string name = attackTree->Attribute("name");
+	myPrint(name);
+	const string rootAttack = attackTree->Attribute("root_attack");
+	myPrint(rootAttack);
+	//【AttackTree的若干Attack】
+	const TiXmlElement* attack = attackTree->FirstChildElement("Attack");
+	while (attack != nullptr) {
+		const string name = attack->Attribute("name");
+		myPrint(name);
+		const string enable = attack->Attribute("enable");
+		myPrint(enable);
+		//标签内容里放的是用户对Attack自然语言描述
+		const char* attackContent = attack->GetText();
+		if (attackContent != nullptr) {
+			myPrint(attackContent);
+			//todo 写入
+		}
+		attack = attack->NextSiblingElement("Attack");
+	}
+	//【AttackTree的若干Relation】
+	const TiXmlElement* relation = attackTree->FirstChildElement("Relation");
+	while (relation != nullptr) {
+		const string type = relation->Attribute("type");
+		myPrint(type);
+		const string father = relation->Attribute("father");
+		myPrint(father);
+		//【Relation的若干Child】
+		const TiXmlElement* child = relation->FirstChildElement("Child");
+		while (child != nullptr) {
+			const string name = child->Attribute("name");
+			myPrint(name);
+			child = child->NextSiblingElement("Child");
+		}
+		relation = relation->NextSiblingElement("Relation");
+	}
+}
+
+//===============================================================================
+
 int main() {
 	//设置程序的地域信息，第一个参数设置LC_ALL表示影响范围是全部，第二个参数表示中文UTF-8编码
 	setlocale(LC_ALL, "zh_CN.UTF-8");
@@ -188,7 +232,8 @@ int main() {
 	}
 
 	//解析进程模板
-	parseProcess(root);
+	//parseProcess(root);
+	parseAttackTree(root);
 
 	//todo 解析其它
 
