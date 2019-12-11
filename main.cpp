@@ -169,6 +169,26 @@ void parseProcess(const TiXmlElement* const t) {
 
 //===============================================================================
 
+//【解析Channel】
+void parseChannel(const TiXmlElement* const t) {
+	const TiXmlElement* channel = t->FirstChildElement("Channel");
+	while (channel != nullptr) {
+		const string id = channel->Attribute("id");
+		myPrint(id);
+		const string fromProcess = channel->Attribute("fromProcess");
+		myPrint(fromProcess);
+		const string fromMethod = channel->Attribute("fromMethod");
+		myPrint(fromMethod);
+		const string toProcess = channel->Attribute("toProcess");
+		myPrint(toProcess);
+		const string toMethod = channel->Attribute("toMethod");
+		myPrint(toMethod);
+		channel = channel->NextSiblingElement("Channel");
+	}
+}
+
+//===============================================================================
+
 //【解析AttackTree】
 void parseAttackTree(const TiXmlElement* const t) {
 	const TiXmlElement* attackTree = t->FirstChildElement("AttackTree");
@@ -213,6 +233,36 @@ void parseAttackTree(const TiXmlElement* const t) {
 
 //===============================================================================
 
+//【解析TopoGraph】
+void parseTopoGraph(const TiXmlElement* const t) {
+	const TiXmlElement* topoGraph = t->FirstChildElement("TopoGraph");
+	if (topoGraph == nullptr)
+		return;
+	const string name = topoGraph->Attribute("name");
+	myPrint(name);
+	//【若干Node】
+	const TiXmlElement* node = topoGraph->FirstChildElement("Node");
+	while (node != nullptr) {
+		const string id = node->Attribute("id");
+		myPrint(id);
+		const string process = node->Attribute("process");
+		myPrint(process);
+		node = node->NextSiblingElement("Node");
+	}
+	//【若干Link】
+	const TiXmlElement* link = topoGraph->FirstChildElement("Link");
+	while (link != nullptr) {
+		const string from = link->Attribute("from");
+		myPrint(from);
+		const string to = link->Attribute("to");
+		myPrint(to);
+		link = link->NextSiblingElement("Link");
+	}
+}
+
+
+//===============================================================================
+
 //【解析InitialKnowledge】
 void parseInitialKnowledge(const TiXmlElement* const t) {
 	const TiXmlElement* ik = t->FirstChildElement("InitialKnowledge");
@@ -227,8 +277,8 @@ void parseInitialKnowledge(const TiXmlElement* const t) {
 
 //===============================================================================
 
-//【解析SafetyProperty】但不设置这个标签
-void parseSafetyProperty(const TiXmlElement* const t) {
+//【解析SecurityProperty】但不设置这个标签
+void parseSecurityProperty(const TiXmlElement* const t) {
 	//【若干ConfidentialProperty】
 	const TiXmlElement* cp = t->FirstChildElement("ConfidentialProperty");
 	while (cp != nullptr) {
@@ -268,6 +318,26 @@ void parseSafetyProperty(const TiXmlElement* const t) {
 
 //===============================================================================
 
+//【解析SafetyProperty】但不设置这个标签
+void parseSafetyProperty(const TiXmlElement* const t) {
+	//【若干Invariant】
+	const TiXmlElement* invariant = t->FirstChildElement("Invariant");
+	while (invariant != nullptr) {
+		const string expression = invariant->Attribute("expression");
+		myPrint(expression);
+		invariant = invariant->NextSiblingElement("Invariant");
+	}
+	//【若干CTL表达式】
+	const TiXmlElement* ctl = t->FirstChildElement("CTL");
+	while (ctl != nullptr) {
+		const string expression = ctl->Attribute("expression");
+		myPrint(expression);
+		ctl = ctl->NextSiblingElement("CTL");
+	}
+}
+
+//===============================================================================
+
 int main() {
 	//设置程序的地域信息，第一个参数设置LC_ALL表示影响范围是全部，第二个参数表示中文UTF-8编码
 	setlocale(LC_ALL, "zh_CN.UTF-8");
@@ -289,14 +359,23 @@ int main() {
 	//解析进程模板
 	//parseProcess(root);
 
+	//解析Channel
+	//parseChannel(root);
+
 	//解析攻击树
 	//parseAttackTree(root);
+
+	//解析拓扑图
+	parseTopoGraph(root);
 
 	//解析InitialKnowledge
 	//parseInitialKnowledge(root);
 
+	//解析SecurityProperty
+	//parseSecurityProperty(root);
+
 	//解析SafetyProperty
-	parseSafetyProperty(root);
+	//parseSafetyProperty(root);
 
 	//todo 解析其它
 

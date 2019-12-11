@@ -70,7 +70,7 @@
   </AttackTree>
   <!--每个模型有若干Channel，是连接两个Process的Communication的信道-->
   <Channel id="0"
-           fromProess="A" fromMethod="send_to_B"
+           fromProcess="A" fromMethod="send_to_B"
            toProcess="B" toMethod="recv_from_A"/>
   <!--SequenceDiagram先不做-->
   <SequenceDiagram></SequenceDiagram>
